@@ -182,23 +182,6 @@ function Section({ id, children, className = '' }: SectionProps) {
   );
 }
 
-// ── Animated child reveal (staggered) ──
-function RevealUp({ children, delay = 0 }: { children: React.ReactNode; delay?: number }) {
-  const [ref, visible] = useInView(0.1);
-  return (
-    <div
-      ref={ref}
-      style={{
-        opacity: visible ? 1 : 0,
-        transform: visible ? 'translateY(0px)' : 'translateY(48px)',
-        transition: `opacity 0.7s cubic-bezier(0.22,1,0.36,1) ${delay}ms, transform 0.7s cubic-bezier(0.22,1,0.36,1) ${delay}ms`,
-      }}
-    >
-      {children}
-    </div>
-  );
-}
-
 // ── Skill badge ──
 function SkillBadge({ skill }: { skill: string }) {
   const [hov, setHov] = useState(false);
@@ -248,7 +231,19 @@ const PROJECTS = [
   },
 ];
 
-function ProjectCard({ proj, onClick }: { proj: any; onClick: (proj: any) => void }) {
+type Project = {
+  title: string;
+  date: string;
+  desc: string;
+  tech: string[];
+  color: string;
+  icon?: string;
+  link: string;
+  thumbnail: string;
+  thumbnailAlt: string;
+};
+
+function ProjectCard({ proj, onClick }: { proj: Project; onClick: (proj: Project) => void }) {
   const [hov, setHov] = useState(false);
   return (
     <div
@@ -304,9 +299,9 @@ function ProjectCard({ proj, onClick }: { proj: any; onClick: (proj: any) => voi
 }
 
 // ── Modal ──
-function Modal({ proj, onClose }) {
+function Modal({ proj, onClose }: { proj: Project | null; onClose: () => void }) {
   useEffect(() => {
-    const handler = (e) => { if (e.key === 'Escape') onClose(); };
+    const handler = (e: KeyboardEvent) => { if (e.key === 'Escape') onClose(); };
     window.addEventListener('keydown', handler);
     return () => window.removeEventListener('keydown', handler);
   }, [onClose]);
@@ -358,7 +353,7 @@ function Modal({ proj, onClose }) {
 }
 
 // ── Nav ──
-function Nav({ active }) {
+function Nav({ active }: { active: string }) {
   const links = ['home','about','skills','projects','contact'];
   const [scrolled, setScrolled] = useState(false);
   useEffect(() => {
@@ -366,7 +361,7 @@ function Nav({ active }) {
     window.addEventListener('scroll', h);
     return () => window.removeEventListener('scroll', h);
   }, []);
-  const handleNav = (e, id) => {
+  const handleNav = (e: React.MouseEvent<HTMLAnchorElement | HTMLButtonElement>, id: string) => {
     e.preventDefault();
     smoothScrollTo(id);
   };
@@ -406,7 +401,7 @@ function Nav({ active }) {
 // MAIN APP
 // ══════════════════════════════════════════
 export default function Portfolio() {
-  const [modal, setModal] = useState(null);
+  const [modal, setModal] = useState<Project | null>(null);
   const [active, setActive] = useState('home');
 
   useEffect(() => {
@@ -491,7 +486,7 @@ export default function Portfolio() {
                 <span className="w-3 h-3 rounded-full bg-yellow-500"/>
                 <span className="w-3 h-3 rounded-full bg-green-500"/>
               </div>
-              <p className="text-gray-500">// developer.json</p>
+              <p className="text-gray-500">{`// developer.json`}</p>
               <pre className="text-xs leading-6 mt-2 text-gray-300">{`{
   "name": "Dhifansa Pradibtya Rafi'",
   "role": "Software Developer",
@@ -582,9 +577,8 @@ export default function Portfolio() {
           {[
             {  label: 'Email', href: 'mailto:dhifansapradibtya@gmail.com', value: 'dhifansapradibtya@gmail.com' },
             {  label: 'Phone', href: 'tel:081225028952', value: '081225028952' },
-          ].map(({ icon, label, href, value }) => (
+          ].map(({ label, href, value }) => (
             <a key={label} href={href} className="flex items-center gap-3 px-5 py-3 bg-gray-900/60 border border-gray-800 rounded-xl hover:border-cyan-600 hover:bg-gray-900 transition-all group">
-              <span className="text-xl">{icon}</span>
               <div>
                 <p className="text-gray-500 text-xs">{label}</p>
                 <p className="text-white text-sm group-hover:text-cyan-400 transition-colors">{value}</p>
