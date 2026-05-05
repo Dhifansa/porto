@@ -38,3 +38,5 @@ Check out our [Next.js deployment documentation](https://nextjs.org/docs/app/bui
 =======
 # porto
 >>>>>>> 031076e3f8f95d843129a298d857a4f65c477487
+
+# npx plugins add vercel/vercel-plugin

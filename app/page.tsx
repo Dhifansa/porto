@@ -514,7 +514,7 @@ export default function Portfolio() {
        <div className="grid md:grid-cols-3 gap-6">
   {[
     { img: '/Developing.png',      title: 'Development', items: ['Web Applications','System Design','Clean Code','Debugging'] },
-    { img: '/Design.png',   title: 'Design',      items: ['UI/UX Design','User Research','Wireframing','Prototyping'] },
+    { img: '/design.png',   title: 'Design',      items: ['UI/UX Design','User Research','Wireframing','Prototyping'] },
     { img: '/cyber.png', title: 'Security',    items: ['Network Security','Linux Ecosystem','System Security','Security Analysis'] },
   ].map(({ img, title, items }) => (
     <div key={title} className="group bg-gray-900/60 border border-gray-800 rounded-2xl p-6 hover:border-cyan-700 transition-colors duration-300">
