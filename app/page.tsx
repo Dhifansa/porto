@@ -3,8 +3,8 @@
 import { useState, useEffect, useRef } from 'react';
 
 // ── Utility: scroll-reveal hook ──
-function useInView(threshold = 0.12) {
-  const ref = useRef(null);
+function useInView(threshold = 0.12): [React.RefObject<HTMLDivElement | null>, boolean] {
+  const ref = useRef<HTMLDivElement>(null);
   const [visible, setVisible] = useState(false);
   useEffect(() => {
     const obs = new IntersectionObserver(
@@ -26,10 +26,10 @@ function smoothScrollTo(targetId: string) {
   const end = el.getBoundingClientRect().top + window.scrollY - 56;
   const dist = end - start;
   const duration = 700;
-  let startTime = null;
-  const easeInOutCubic = (t) =>
-    t < 0.5 ? 4 * t * t * t : 1 - Math.pow(-2 * t + 2, 3) / 2;
-  const step = (ts) => {
+  let startTime: number | null = null;
+const easeInOutCubic = (t: number) =>
+  t < 0.5 ? 4 * t * t * t : 1 - Math.pow(-2 * t + 2, 3) / 2;
+const step = (ts: number) => {
     if (!startTime) startTime = ts;
     const elapsed = ts - startTime;
     const progress = Math.min(elapsed / duration, 1);
@@ -41,18 +41,26 @@ function smoothScrollTo(targetId: string) {
 
 // ── Animated particle canvas ──
 function ParticleCanvas() {
-  const canvasRef = useRef(null);
+  const canvasRef = useRef<HTMLCanvasElement>(null);
+
   useEffect(() => {
     const canvas = canvasRef.current;
+    if (!canvas) return;
+
     const ctx = canvas.getContext('2d');
+    if (!ctx) return;
+
     let W = canvas.width = window.innerWidth;
     let H = canvas.height = window.innerHeight;
+
     const particles = Array.from({ length: 80 }, () => ({
       x: Math.random() * W, y: Math.random() * H,
       vx: (Math.random() - 0.5) * 0.4, vy: (Math.random() - 0.5) * 0.4,
       r: Math.random() * 2 + 1,
     }));
-    let raf;
+
+    let raf: number;
+
     const draw = () => {
       ctx.clearRect(0, 0, W, H);
       particles.forEach(p => {
@@ -75,21 +83,38 @@ function ParticleCanvas() {
       }));
       raf = requestAnimationFrame(draw);
     };
+
     draw();
-    const resize = () => { W = canvas.width = window.innerWidth; H = canvas.height = window.innerHeight; };
+
+    const resize = () => {
+      W = canvas.width = window.innerWidth;
+      H = canvas.height = window.innerHeight;
+    };
+
     window.addEventListener('resize', resize);
     return () => { cancelAnimationFrame(raf); window.removeEventListener('resize', resize); };
   }, []);
+
   return <canvas ref={canvasRef} className="fixed inset-0 pointer-events-none z-0" />;
 }
 
 // ── Glitch Text ──
-function GlitchText({ text, className = '' }) {
-  const [glitch, setGlitch] = useState(false);
+interface GlitchTextProps {
+  text: string;
+  className?: string;
+}
+
+function GlitchText({ text, className = '' }: GlitchTextProps) {
+  const [glitch, setGlitch] = useState<boolean>(false);
+
   useEffect(() => {
-    const t = setInterval(() => { setGlitch(true); setTimeout(() => setGlitch(false), 200); }, 3000);
+    const t = setInterval(() => {
+      setGlitch(true);
+      setTimeout(() => setGlitch(false), 200);
+    }, 3000);
     return () => clearInterval(t);
   }, []);
+
   return (
     <span className={`relative inline-block ${className}`} style={{ fontFamily: 'monospace' }}>
       {text}
@@ -102,10 +127,16 @@ function GlitchText({ text, className = '' }) {
 }
 
 // ── Typed effect ──
-function TypedText({ words }) {
-  const [idx, setIdx] = useState(0);
-  const [sub, setSub] = useState('');
-  const [del, setDel] = useState(false);
+// ── Typed effect ──
+interface TypedTextProps {
+  words: string[];
+}
+
+function TypedText({ words }: TypedTextProps) {
+  const [idx, setIdx] = useState<number>(0);
+  const [sub, setSub] = useState<string>('');
+  const [del, setDel] = useState<boolean>(false);
+
   useEffect(() => {
     const word = words[idx % words.length];
     const speed = del ? 60 : 100;
@@ -120,11 +151,20 @@ function TypedText({ words }) {
     }, speed);
     return () => clearTimeout(t);
   }, [sub, del, idx, words]);
-  return <span className="text-cyan-400">{sub}<span className="animate-pulse">|</span></span>;
+
+  return (
+    <span className="text-cyan-400">
+      {sub}<span className="animate-pulse">|</span>
+    </span>
+  );
 }
 
-// ── Section wrapper ──
-function Section({ id, children, className = '' }) {
+interface SectionProps {
+  id: string;
+  children: React.ReactNode;
+  className?: string;
+}
+function Section({ id, children, className = '' }: SectionProps) {
   const [ref, visible] = useInView();
   return (
     <section
@@ -143,7 +183,7 @@ function Section({ id, children, className = '' }) {
 }
 
 // ── Animated child reveal (staggered) ──
-function RevealUp({ children, delay = 0 }) {
+function RevealUp({ children, delay = 0 }: { children: React.ReactNode; delay?: number }) {
   const [ref, visible] = useInView(0.1);
   return (
     <div
@@ -160,7 +200,7 @@ function RevealUp({ children, delay = 0 }) {
 }
 
 // ── Skill badge ──
-function SkillBadge({ skill }) {
+function SkillBadge({ skill }: { skill: string }) {
   const [hov, setHov] = useState(false);
   return (
     <span onMouseEnter={() => setHov(true)} onMouseLeave={() => setHov(false)}
@@ -208,14 +248,13 @@ const PROJECTS = [
   },
 ];
 
-function ProjectCard({ proj, onClick }) {
+function ProjectCard({ proj, onClick }: { proj: any; onClick: (proj: any) => void }) {
   const [hov, setHov] = useState(false);
   return (
     <div
       onMouseEnter={() => setHov(true)}
       onMouseLeave={() => setHov(false)}
       onClick={() => onClick(proj)}
-      style={{ transition: 'transform 0.35s cubic-bezier(0.22,1,0.36,1), box-shadow 0.35s ease, border-color 0.3s ease' }}
       className={`relative rounded-2xl border bg-gray-900/90 backdrop-blur overflow-hidden cursor-pointer flex flex-col
         ${hov ? 'border-cyan-500 shadow-2xl shadow-cyan-500/25' : 'border-gray-700'}
       `}
@@ -301,7 +340,7 @@ function Modal({ proj, onClose }) {
         <div className="p-6">
           <p className="text-gray-300 text-sm leading-relaxed mb-5">{proj.desc}</p>
           <div className="flex flex-wrap gap-2 mb-6">
-            {proj.tech.map(t => <span key={t} className="text-xs px-3 py-1 rounded-full bg-gray-800 text-cyan-300 border border-cyan-900">{t}</span>)}
+            {proj.tech.map((t: string) => <span key={t} className="text-xs px-3 py-1 rounded-full bg-gray-800 text-cyan-300 border border-cyan-900">{t}</span>)}
           </div>
           <div className="flex gap-3">
             <a href={proj.link} target="_blank" rel="noreferrer"
