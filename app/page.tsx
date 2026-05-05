@@ -18,7 +18,8 @@ function useInView(threshold = 0.12) {
 }
 
 // ── Smooth scroll utility ──
-function smoothScrollTo(targetId : String) {
+function smoothScrollTo(targetId: string) {
+
   const el = document.getElementById(targetId);
   if (!el) return;
   const start = window.scrollY;
