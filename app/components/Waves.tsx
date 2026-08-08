@@ -1,6 +1,6 @@
 "use client";
 
-import { useRef, useEffect } from 'react';
+import { useRef, useEffect, useState } from 'react';
 
 // ── Perlin Noise helpers ──
 class Grad {
@@ -126,7 +126,8 @@ const Waves = ({
   const canvasRef = useRef<HTMLCanvasElement>(null);
   const ctxRef = useRef<CanvasRenderingContext2D | null>(null);
   const boundingRef = useRef({ width: 0, height: 0, left: 0, top: 0 });
-  const noiseRef = useRef(new Noise(Math.random()));
+  const [noiseSeed] = useState(() => Math.random());
+  const noiseRef = useRef(new Noise(noiseSeed));
   const linesRef = useRef<WavePoint[][]>([]);
   const mouseRef = useRef<MouseState>({
     x: -10, y: 0, lx: 0, ly: 0,
@@ -244,7 +245,19 @@ const Waves = ({
       ctx.stroke();
     }
 
+    const isMobile = window.innerWidth < 768;
+    let frameCount = 0;
+
     function tick(t: number) {
+      // On mobile, skip every other frame to reduce CPU usage
+      if (isMobile) {
+        frameCount++;
+        if (frameCount % 2 !== 0) {
+          frameIdRef.current = requestAnimationFrame(tick);
+          return;
+        }
+      }
+
       const mouse = mouseRef.current;
       mouse.sx += (mouse.x - mouse.sx) * 0.1;
       mouse.sy += (mouse.y - mouse.sy) * 0.1;

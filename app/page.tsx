@@ -2,8 +2,17 @@
 
 import { useState, useEffect, useRef } from 'react';
 import dynamic from 'next/dynamic';
-import Waves from './components/Waves';
-import LogoLoop from './components/LogoLoop';
+import Image from 'next/image';
+
+const Waves = dynamic(() => import('./components/Waves'), {
+  ssr: false,
+  loading: () => <div style={{ position: 'absolute', inset: 0, background: 'transparent' }} />,
+});
+
+const LogoLoop = dynamic(() => import('./components/LogoLoop'), {
+  ssr: false,
+  loading: () => <div style={{ height: 36 }} />,
+});
 import {
   SiReact,
   SiNextdotjs,
@@ -38,6 +47,16 @@ const Lanyard = dynamic(() => import('./components/Lanyard'), {
     </div>
   ),
 });
+
+// ── Utility: Deferred Render ──
+function DeferredRender({ children, delay = 1000 }: { children: React.ReactNode, delay?: number }) {
+  const [show, setShow] = useState(false);
+  useEffect(() => {
+    const t = setTimeout(() => setShow(true), delay);
+    return () => clearTimeout(t);
+  }, [delay]);
+  return show ? <>{children}</> : null;
+}
 
 // ── Utility: scroll-reveal hook ──
 function useInView(threshold = 0.12): [React.RefObject<HTMLDivElement | null>, boolean] {
@@ -77,6 +96,7 @@ function smoothScrollTo(targetId: string) {
 }
 
 // ── Animated particle canvas ──
+// eslint-disable-next-line @typescript-eslint/no-unused-vars
 function ParticleCanvas() {
   const canvasRef = useRef<HTMLCanvasElement>(null);
 
@@ -241,7 +261,7 @@ const PROJECTS = [
     color: 'from-cyan-500 to-blue-600',
 
     link: 'https://umkm-sales.aksivastudio.my.id',
-    thumbnail: '/Sistem Manajemen UMKM.jpeg',
+    thumbnail: '/Sistem Manajemen UMKM.webp',
     thumbnailAlt: 'Stock & Kasir UMKM preview',
   },
   {
@@ -252,7 +272,7 @@ const PROJECTS = [
     color: 'from-purple-500 to-pink-600',
 
     link: '#',
-    thumbnail: '/Design UI SecondChoice.png',
+    thumbnail: '/Design UI SecondChoice.webp',
     thumbnailAlt: 'SecondChoice UI preview',
   },
   {
@@ -263,7 +283,7 @@ const PROJECTS = [
     color: 'from-green-500 to-teal-600',
 
     link: 'https://codelines-id.vercel.app/',
-    thumbnail: '/codelines.png',
+    thumbnail: '/codelines.webp',
     thumbnailAlt: 'Pupuk Petani System preview',
   },
 ];
@@ -294,10 +314,14 @@ function ProjectCard({ proj, onClick }: { proj: Project; onClick: (proj: Project
     >
       {/* Thumbnail */}
       <div className="relative overflow-hidden h-44 bg-gray-800">
-        <img
+        <Image
           src={proj.thumbnail}
           alt={proj.thumbnailAlt}
+          width={400}
+          height={176}
           className="w-full h-full object-cover"
+          sizes="(max-width: 768px) 100vw, 33vw"
+          loading="lazy"
           style={{ transition: 'transform 0.5s cubic-bezier(0.22,1,0.36,1)', transform: hov ? 'scale(1.08)' : 'scale(1)' }}
         />
         {/* Gradient overlay */}
@@ -354,7 +378,7 @@ function Modal({ proj, onClose }: { proj: Project | null; onClose: () => void })
         <style>{`@keyframes modalIn { from { opacity:0; transform:scale(0.92) translateY(20px); } to { opacity:1; transform:scale(1) translateY(0); } }`}</style>
         {/* Thumbnail header */}
         <div className="relative h-48 overflow-hidden">
-          <img src={proj.thumbnail} alt={proj.thumbnailAlt} className="w-full h-full object-cover" />
+          <Image src={proj.thumbnail} alt={proj.thumbnailAlt} width={600} height={192} className="w-full h-full object-cover" sizes="(max-width: 768px) 100vw, 500px" loading="lazy" />
           <div className="absolute inset-0 bg-gradient-to-t from-gray-900 via-gray-900/50 to-transparent" />
           <div className={`absolute top-0 left-0 right-0 h-1 bg-gradient-to-r ${proj.color}`} />
           <button onClick={onClose} className="absolute top-3 right-3 w-8 h-8 rounded-full bg-gray-900/80 border border-gray-700 text-gray-300 hover:text-white hover:border-gray-500 transition flex items-center justify-center text-sm">
@@ -503,29 +527,33 @@ export default function Portfolio() {
       <section id="home" className="relative min-h-screen flex flex-col items-center justify-center px-6 text-center z-10">
         {/* Waves Background */}
         <div style={{ position: 'absolute', inset: 0, zIndex: 0 }}>
-          <Waves
-            lineColor="#5227FF"
-            backgroundColor="transparent"
-            waveSpeedX={0.02}
-            waveSpeedY={0.01}
-            waveAmpX={40}
-            waveAmpY={20}
-            friction={0.9}
-            tension={0.01}
-            maxCursorMove={120}
-            xGap={12}
-            yGap={36}
-          />
+          <DeferredRender delay={500}>
+            <Waves
+              lineColor="#5227FF"
+              backgroundColor="transparent"
+              waveSpeedX={0.02}
+              waveSpeedY={0.01}
+              waveAmpX={40}
+              waveAmpY={20}
+              friction={0.9}
+              tension={0.01}
+              maxCursorMove={120}
+              xGap={12}
+              yGap={36}
+            />
+          </DeferredRender>
         </div>
         <div className="relative z-10 flex flex-col md:flex-row items-center justify-center gap-6 md:gap-0 w-full max-w-6xl mx-auto h-full">
           {/* Lanyard Card */}
           <div className="w-full md:w-1/2 h-[65vh] md:h-screen flex items-center justify-center md:-mt-16">
-            <Lanyard
-              position={[0, 0, 10]}
-              gravity={[0, -40, 0]}
-              frontImage="/Dhifansa.jpeg"
-              imageFit="cover"
-            />
+            <DeferredRender delay={800}>
+              <Lanyard
+                position={[0, 0, 10]}
+                gravity={[0, -40, 0]}
+                frontImage="/Dhifansa.jpeg"
+                imageFit="cover"
+              />
+            </DeferredRender>
           </div>
           {/* Text Content */}
           <div className="w-full md:w-1/2 flex flex-col items-center md:items-start text-center md:text-left">
@@ -633,20 +661,22 @@ export default function Portfolio() {
 
         <div className="grid md:grid-cols-3 gap-6">
           {[
-            { img: '/Developing.png', title: 'Development', items: ['Web Applications', 'System Design', 'Clean Code', 'Debugging'] },
-            { img: '/design.png', title: 'Design', items: ['UI/UX Design', 'User Research', 'Wireframing', 'Prototyping'] },
-            { img: '/cyber.png', title: 'Security', items: ['Network Security', 'Linux Ecosystem', 'System Security', 'Security Analysis'] },
+            { img: '/Developing.webp', title: 'Development', items: ['Web Applications', 'System Design', 'Clean Code', 'Debugging'] },
+            { img: '/design.webp', title: 'Design', items: ['UI/UX Design', 'User Research', 'Wireframing', 'Prototyping'] },
+            { img: '/cyber.webp', title: 'Security', items: ['Network Security', 'Linux Ecosystem', 'System Security', 'Security Analysis'] },
           ].map(({ img, title, items }) => (
             <div key={title} className="group bg-gray-900/60 border border-gray-800 rounded-2xl p-6 hover:border-cyan-700 transition-colors duration-300">
 
               {/* Bingkai foto — ganti rounded-xl jadi rounded-full untuk lingkaran */}
               <div className="w-65 h-35 rounded-xl overflow-hidden mb-3 border border-gray-700 group-hover:border-cyan-500 transition-colors duration-300 bg-gray-800 flex items-center justify-center">
-                <img
+                <Image
                   src={img}
                   alt={title}
-                  width={112}
-                  height={80}
+                  width={260}
+                  height={140}
                   className="w-full h-full object-cover"
+                  sizes="(max-width: 768px) 100vw, 33vw"
+                  loading="lazy"
                 />
               </div>
 
@@ -709,14 +739,14 @@ export default function Portfolio() {
         <p className="font-mono text-gray-500 text-xs uppercase tracking-widest mb-4">{/* social_links */}</p>
         <div className="flex flex-wrap gap-4">
           {[
-            { img: '/instagram-logo-instagram-icon-transparent-free-png.png', label: 'Instagram', href: 'https://www.instagram.com/dhifansapradibya?igsh=b3M3bW1vNGtvM284&utm_source=qr', size: 28 },
-            { img: '/tiktok-logo-tik-tok-logo-icon-png-svg.png', label: 'TikTok', href: 'https://www.tiktok.com/@pasobesoo?_r=1&...', size: 18 },
-            { img: '/linkedin-logo-transparent-free-png.png', label: 'LinkedIn', href: 'https://www.linkedin.com/in/dhifansa-pradibtya-rafi-a32531322/', size: 28 },
-            { img: '/symbole-github-violet.png', label: 'GitHub', href: 'https://github.com/dhifansa', size: 18 },
+            { img: '/instagram.webp', label: 'Instagram', href: 'https://www.instagram.com/dhifansapradibya?igsh=b3M3bW1vNGtvM284&utm_source=qr', size: 28 },
+            { img: '/tiktok.webp', label: 'TikTok', href: 'https://www.tiktok.com/@pasobesoo?_r=1&...', size: 18 },
+            { img: '/linkedin.webp', label: 'LinkedIn', href: 'https://www.linkedin.com/in/dhifansa-pradibtya-rafi-a32531322/', size: 28 },
+            { img: '/github.webp', label: 'GitHub', href: 'https://github.com/dhifansa', size: 18 },
           ].map(({ img, label, href, size }, index) => (
             <a key={`${label}-${index}`} href={href} target="_blank" rel="noreferrer"
               className="flex items-center gap-2 px-5 py-2 border border-gray-700 rounded-full text-sm text-gray-300 hover:text-white hover:border-cyan-500 hover:bg-cyan-950/40 transition-all font-mono">
-              <img
+              <Image
                 src={img}
                 alt={label}
                 width={size}
