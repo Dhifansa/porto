@@ -1,6 +1,43 @@
 "use client";
 
 import { useState, useEffect, useRef } from 'react';
+import dynamic from 'next/dynamic';
+import Waves from './components/Waves';
+import LogoLoop from './components/LogoLoop';
+import {
+  SiReact,
+  SiNextdotjs,
+  SiTypescript,
+  SiTailwindcss,
+  SiLinux,
+  SiDocker,
+  SiGit,
+  SiPython,
+  SiFigma,
+  SiNodedotjs
+} from 'react-icons/si';
+
+const techLogos = [
+  { node: <SiReact />, title: "React", href: "https://react.dev" },
+  { node: <SiNextdotjs />, title: "Next.js", href: "https://nextjs.org" },
+  { node: <SiTypescript />, title: "TypeScript", href: "https://www.typescriptlang.org" },
+  { node: <SiTailwindcss />, title: "Tailwind CSS", href: "https://tailwindcss.com" },
+  { node: <SiNodedotjs />, title: "Node.js", href: "https://nodejs.org" },
+  { node: <SiPython />, title: "Python", href: "https://www.python.org" },
+  { node: <SiLinux />, title: "Linux", href: "https://www.linux.org" },
+  { node: <SiDocker />, title: "Docker", href: "https://www.docker.com" },
+  { node: <SiGit />, title: "Git", href: "https://git-scm.com" },
+  { node: <SiFigma />, title: "Figma", href: "https://www.figma.com" },
+];
+
+const Lanyard = dynamic(() => import('./components/Lanyard'), {
+  ssr: false,
+  loading: () => (
+    <div className="w-full h-full flex items-center justify-center">
+      <div className="w-20 h-20 rounded-full border-4 border-cyan-400/30 border-t-cyan-400 animate-spin" />
+    </div>
+  ),
+});
 
 // ── Utility: scroll-reveal hook ──
 function useInView(threshold = 0.12): [React.RefObject<HTMLDivElement | null>, boolean] {
@@ -27,9 +64,9 @@ function smoothScrollTo(targetId: string) {
   const dist = end - start;
   const duration = 700;
   let startTime: number | null = null;
-const easeInOutCubic = (t: number) =>
-  t < 0.5 ? 4 * t * t * t : 1 - Math.pow(-2 * t + 2, 3) / 2;
-const step = (ts: number) => {
+  const easeInOutCubic = (t: number) =>
+    t < 0.5 ? 4 * t * t * t : 1 - Math.pow(-2 * t + 2, 3) / 2;
+  const step = (ts: number) => {
     if (!startTime) startTime = ts;
     const elapsed = ts - startTime;
     const progress = Math.min(elapsed / duration, 1);
@@ -202,7 +239,7 @@ const PROJECTS = [
     desc: 'Mengembangkan sistem berbasis web untuk mendigitalisasi operasional harian UMKM melalui integrasi manajemen inventaris dan transaksi. Fokus pada efisiensi pengelolaan data barang serta akurasi pencatatan kasir secara real-time.',
     tech: ['Web Development', 'Real-time System', 'Inventory Management'],
     color: 'from-cyan-500 to-blue-600',
-    
+
     link: 'https://umkm-sales.aksivastudio.my.id',
     thumbnail: '/Sistem Manajemen UMKM.jpeg',
     thumbnailAlt: 'Stock & Kasir UMKM preview',
@@ -213,20 +250,20 @@ const PROJECTS = [
     desc: 'SecondChoice adalah platform jual beli barang bekas yang mempertemukan penjual dan pembeli. Memungkinkan pengguna menjelajahi produk, melihat profil, mengecek detail barang dan penjual, serta fitur layanan lengkap.',
     tech: ['UI/UX Design', 'Web Design', 'Marketplace'],
     color: 'from-purple-500 to-pink-600',
-    
+
     link: '#',
     thumbnail: '/Design UI SecondChoice.png',
     thumbnailAlt: 'SecondChoice UI preview',
   },
   {
-    title: 'Sistem Manajemen Pupuk Petani',
-    date: 'Nov 2025 – Dec 2025',
-    desc: 'Sistem manajemen pupuk untuk membantu petani mengelola distribusi, stok, dan penggunaan pupuk secara lebih efisien. Menganalisis kebutuhan pengguna, merancang alur intuitif, dan meningkatkan pengalaman pengguna.',
-    tech: ['System Design', 'UI/UX', 'Agricultural Tech'],
+    title: 'Landing Page Codelines',
+    date: 'february 2026 - now',
+    desc: 'Masih dalam tahap pengembangan',
+    tech: ['System Design', 'UI/UX', 'Front End'],
     color: 'from-green-500 to-teal-600',
-    icon: '🌱',
-    link: '#',
-    thumbnail: 'https://placehold.co/600x340/0c2e1a/22c55e?text=Pupuk+Petani+System',
+
+    link: 'https://codelines-id.vercel.app/',
+    thumbnail: '/codelines.png',
     thumbnailAlt: 'Pupuk Petani System preview',
   },
 ];
@@ -274,7 +311,7 @@ function ProjectCard({ proj, onClick }: { proj: Project; onClick: (proj: Project
         {/* Hover overlay: "Click to view" */}
         <div className={`absolute inset-0 flex items-center justify-center transition-opacity duration-300 ${hov ? 'opacity-100' : 'opacity-0'}`}>
           <span className="bg-cyan-500/90 text-gray-900 text-xs font-bold px-4 py-1.5 rounded-full shadow-lg backdrop-blur">
-            🔍 View Project
+            View Project
           </span>
         </div>
       </div>
@@ -340,7 +377,7 @@ function Modal({ proj, onClose }: { proj: Project | null; onClose: () => void })
           <div className="flex gap-3">
             <a href={proj.link} target="_blank" rel="noreferrer"
               className="flex-1 text-center py-2.5 rounded-xl bg-gradient-to-r from-cyan-500 to-blue-600 text-white font-semibold text-sm hover:opacity-90 transition shadow-lg shadow-cyan-500/20">
-               Visit Project
+              Visit Project
             </a>
             <button onClick={onClose} className="px-5 py-2.5 rounded-xl border border-gray-700 text-gray-400 hover:border-gray-500 hover:text-gray-200 transition text-sm">
               Close
@@ -354,24 +391,34 @@ function Modal({ proj, onClose }: { proj: Project | null; onClose: () => void })
 
 // ── Nav ──
 function Nav({ active }: { active: string }) {
-  const links = ['home','about','skills','projects','contact'];
+  const links = ['home', 'about', 'skills', 'projects', 'contact'];
   const [scrolled, setScrolled] = useState(false);
+  const [isOpen, setIsOpen] = useState(false);
+
   useEffect(() => {
     const h = () => setScrolled(window.scrollY > 40);
     window.addEventListener('scroll', h);
     return () => window.removeEventListener('scroll', h);
   }, []);
+
   const handleNav = (e: React.MouseEvent<HTMLAnchorElement | HTMLButtonElement>, id: string) => {
     e.preventDefault();
+    setIsOpen(false);
     smoothScrollTo(id);
   };
+
   return (
-    <nav className={`fixed top-0 left-0 right-0 z-40 transition-all duration-300 ${scrolled ? 'bg-gray-950/90 backdrop-blur border-b border-gray-800 shadow-lg' : ''}`}>
+    <nav className={`fixed top-0 left-0 right-0 z-40 transition-all duration-300 ${scrolled || isOpen
+      ? 'bg-gray-950/25 backdrop-blur-md border-b border-white/10 shadow-lg shadow-black/20'
+      : 'bg-transparent border-b border-transparent'
+      }`}>
       <div className="max-w-5xl mx-auto px-6 flex items-center justify-between h-14">
         <button onClick={(e) => handleNav(e, 'home')} className="font-mono font-bold text-cyan-400 text-lg tracking-widest hover:opacity-80 transition-opacity">
           Fansa<span className="text-white">.</span>
         </button>
-        <div className="flex gap-6">
+
+        {/* Desktop Menu */}
+        <div className="hidden md:flex gap-6">
           {links.map(l => (
             <a
               key={l}
@@ -392,6 +439,35 @@ function Nav({ active }: { active: string }) {
             </a>
           ))}
         </div>
+
+        {/* Mobile Toggle Button (Titik 3) */}
+        <button
+          onClick={() => setIsOpen(!isOpen)}
+          className="flex md:hidden flex-col items-center justify-center gap-1 w-8 h-8 rounded-full border border-gray-700 bg-gray-900/40 text-gray-300 hover:text-cyan-400 hover:border-cyan-500 transition-all duration-200"
+          aria-label="Toggle Menu"
+        >
+          <span className="w-1 h-1 rounded-full bg-current" />
+          <span className="w-1 h-1 rounded-full bg-current" />
+          <span className="w-1 h-1 rounded-full bg-current" />
+        </button>
+      </div>
+
+      {/* Mobile Menu Dropdown */}
+      <div
+        className={`md:hidden overflow-hidden transition-all duration-300 ease-in-out border-t border-white/5 ${isOpen ? 'max-h-64 opacity-100 py-4' : 'max-h-0 opacity-0 pointer-events-none'
+          } bg-gray-950/30 backdrop-blur-lg px-6 flex flex-col gap-4`}
+      >
+        {links.map(l => (
+          <a
+            key={l}
+            href={`#${l}`}
+            onClick={(e) => handleNav(e, l)}
+            className={`text-sm font-mono capitalize transition-colors hover:text-cyan-400 py-1 ${active === l ? 'text-cyan-400 border-l-2 border-cyan-400 pl-3' : 'text-gray-400 pl-3'
+              }`}
+          >
+            {l}
+          </a>
+        ))}
       </div>
     </nav>
   );
@@ -405,7 +481,7 @@ export default function Portfolio() {
   const [active, setActive] = useState('home');
 
   useEffect(() => {
-    const sections = ['home','about','skills','projects','contact'];
+    const sections = ['home', 'about', 'skills', 'projects', 'contact'];
     const obs = new IntersectionObserver((entries) => {
       entries.forEach(e => { if (e.isIntersecting) setActive(e.target.id); });
     }, { threshold: 0.4 });
@@ -413,96 +489,122 @@ export default function Portfolio() {
     return () => obs.disconnect();
   }, []);
 
-  const SKILLS = ['Software Developer','UI/UX Design','Network Security','Debugging Mindset',
-    'Understanding AI Behavior','Consistency','Critical Thinking','Analytical Skills',
-    'Independent Working','Prompt Writing','Curiosity','Time Management'];
+  const SKILLS = ['Software Developer', 'UI/UX Design', 'Network Security', 'Debugging Mindset',
+    'Understanding AI Behavior', 'Consistency', 'Critical Thinking', 'Analytical Skills',
+    'Independent Working', 'Prompt Writing', 'Curiosity', 'Time Management'];
 
   return (
     <div className="min-h-screen bg-gray-950 text-white overflow-x-hidden">
-      <ParticleCanvas />
+
       <Nav active={active} />
       <Modal proj={modal} onClose={() => setModal(null)} />
 
       {/* ── HERO ── */}
       <section id="home" className="relative min-h-screen flex flex-col items-center justify-center px-6 text-center z-10">
-        <div className="mb-6 relative">
-          <div className="w-32 h-32 rounded-full border-4 border-cyan-400 shadow-xl shadow-cyan-400/30 overflow-hidden mx-auto">
-            <img src="/Dhifansa.jpeg" alt="Dhifansa" className="w-full h-full object-cover" />
+        {/* Waves Background */}
+        <div style={{ position: 'absolute', inset: 0, zIndex: 0 }}>
+          <Waves
+            lineColor="#5227FF"
+            backgroundColor="transparent"
+            waveSpeedX={0.02}
+            waveSpeedY={0.01}
+            waveAmpX={40}
+            waveAmpY={20}
+            friction={0.9}
+            tension={0.01}
+            maxCursorMove={120}
+            xGap={12}
+            yGap={36}
+          />
+        </div>
+        <div className="relative z-10 flex flex-col md:flex-row items-center justify-center gap-6 md:gap-0 w-full max-w-6xl mx-auto h-full">
+          {/* Lanyard Card */}
+          <div className="w-full md:w-1/2 h-[65vh] md:h-screen flex items-center justify-center md:-mt-16">
+            <Lanyard
+              position={[0, 0, 10]}
+              gravity={[0, -40, 0]}
+              frontImage="/Dhifansa.jpeg"
+              imageFit="cover"
+            />
           </div>
-          <span className="absolute bottom-1 right-1 w-4 h-4 rounded-full bg-green-400 border-2 border-gray-950 animate-pulse" />
+          {/* Text Content */}
+          <div className="w-full md:w-1/2 flex flex-col items-center md:items-start text-center md:text-left">
+            <p className="font-mono text-cyan-500 text-sm tracking-widest mb-2 uppercase">Hello, World! </p>
+            <h1 className="text-4xl md:text-6xl font-black mb-3 leading-tight">
+              <GlitchText text="Dhifansa Pradibtya Rafi'" className="text-white" />
+            </h1>
+            <p className="text-xl md:text-2xl font-mono mb-6 h-8">
+              <TypedText words={['Software Developer', 'UI/UX Designer', 'Network Security Enthusiast', 'AI Explorer']} />
+            </p>
+            <p className="text-gray-400 max-w-xl mb-8 text-sm leading-relaxed">
+              Mahasiswa Sistem Informasi di Universitas Negeri Semarang yang berfokus pada clean code, keamanan sistem, dan pengalaman pengguna yang nyaman.
+            </p>
+            <div className="flex gap-4 flex-wrap justify-center md:justify-start">
+              <button onClick={() => smoothScrollTo('projects')} className="px-6 py-3 rounded-xl bg-gradient-to-r from-cyan-500 to-blue-600 font-semibold hover:scale-105 transition-transform shadow-lg shadow-cyan-500/30">
+                View Projects
+              </button>
+              <button onClick={() => smoothScrollTo('contact')} className="px-6 py-3 rounded-xl border border-cyan-600 text-cyan-400 font-semibold hover:bg-cyan-950 transition-colors">
+                Contact Me
+              </button>
+            </div>
+          </div>
         </div>
-        <p className="font-mono text-cyan-500 text-sm tracking-widest mb-2 uppercase">Hello, World! </p>
-        <h1 className="text-4xl md:text-6xl font-black mb-3 leading-tight">
-          <GlitchText text="Dhifansa Pradibtya Rafi'" className="text-white" />
-        </h1>
-        <p className="text-xl md:text-2xl font-mono mb-6 h-8">
-          <TypedText words={['Software Developer','UI/UX Designer','Network Security Enthusiast','AI Explorer']} />
-        </p>
-        <p className="text-gray-400 max-w-xl mb-8 text-sm leading-relaxed">
-          Mahasiswa Sistem Informasi di Universitas Negeri Semarang yang berfokus pada clean code, keamanan sistem, dan pengalaman pengguna yang nyaman.
-        </p>
-        <div className="flex gap-4 flex-wrap justify-center">
-          <button onClick={() => smoothScrollTo('projects')} className="px-6 py-3 rounded-xl bg-gradient-to-r from-cyan-500 to-blue-600 font-semibold hover:scale-105 transition-transform shadow-lg shadow-cyan-500/30">
-            View Projects
-          </button>
-          <button onClick={() => smoothScrollTo('contact')} className="px-6 py-3 rounded-xl border border-cyan-600 text-cyan-400 font-semibold hover:bg-cyan-950 transition-colors">
-            Contact Me
-          </button>
-        </div>
-        <div className="absolute bottom-8 left-1/2 -translate-x-1/2 flex flex-col items-center gap-1 animate-bounce text-gray-500 text-xs">
+        <div className="absolute bottom-8 left-1/2 -translate-x-1/2 flex flex-col items-center gap-1 animate-bounce text-gray-500 text-xs z-10">
           <span>scroll</span>
           <span>↓</span>
         </div>
       </section>
 
       {/* ── ABOUT ── */}
-      <Section id="about" className="relative z-10 max-w-5xl mx-auto px-6 py-24">
-        <p className="font-mono text-cyan-500 text-xs tracking-widest uppercase mb-2">{/* about_me */}</p>
-        <h2 className="text-3xl font-bold mb-10">About <span className="text-cyan-400">Me</span></h2>
-        <div className="grid md:grid-cols-2 gap-10 items-center">
-          <div>
-            <p className="text-gray-300 leading-relaxed mb-4 text-sm">
-              Saya <span className="text-cyan-400 font-semibold">Dhifansa Pradibtya Rafi&apos;</span>, seorang Software Developer dengan minat pada network security, UI/interface design, dan ekosistem Linux.
-            </p>
-            <p className="text-gray-300 leading-relaxed mb-4 text-sm">
-              Saya suka membangun aplikasi yang rapi, aman, dan mudah digunakan — mulai dari perancangan, implementasi, hingga optimasi — dengan fokus pada clean code, keamanan sistem, dan pengalaman pengguna yang nyaman.
-            </p>
-            <p className="text-gray-300 leading-relaxed text-sm">
-              Saya terbuka untuk kolaborasi maupun peluang di bidang pengembangan software, security, dan produk digital.
-            </p>
-            <div className="mt-6 grid grid-cols-2 gap-3 text-sm font-mono">
-              {[['📅 Born','28 April 2006'],['📍 Location','Semarang, Indonesia'],['🎓 Education','Unnes – Info Systems'],['📧 Email','dhifansapradibtya@gmail.com']].map(([k,v]) => (
-                <div key={k} className="bg-gray-900/60 border border-gray-800 rounded-lg p-3">
-                  <p className="text-gray-500 text-xs">{k}</p>
-                  <p className="text-white text-xs mt-0.5 truncate">{v}</p>
-                </div>
-              ))}
-            </div>
-          </div>
-          <div className="relative">
-            <div className="bg-gray-900/60 border border-gray-800 rounded-2xl p-6 font-mono text-sm">
-              <div className="flex gap-2 mb-4">
-                <span className="w-3 h-3 rounded-full bg-red-500"/>
-                <span className="w-3 h-3 rounded-full bg-yellow-500"/>
-                <span className="w-3 h-3 rounded-full bg-green-500"/>
+      <div className="bg-white text-gray-900 w-full">
+        <Section id="about" className="relative z-10 max-w-5xl mx-auto px-6 py-24">
+          <p className="font-mono text-cyan-600 text-xs tracking-widest uppercase mb-2">{/* about_me */}</p>
+          <h2 className="text-3xl font-bold mb-10 text-gray-900">About <span className="text-cyan-600">Me</span></h2>
+          <div className="grid md:grid-cols-2 gap-10 items-center">
+            <div>
+              <p className="text-gray-600 leading-relaxed mb-4 text-sm">
+                Saya <span className="text-cyan-600 font-semibold">Dhifansa Pradibtya Rafi&apos;</span>, seorang Software Developer dengan minat pada network security, UI/interface design, dan ekosistem Linux.
+              </p>
+              <p className="text-gray-600 leading-relaxed mb-4 text-sm">
+                Saya suka membangun aplikasi yang rapi, aman, dan mudah digunakan — mulai dari perancangan, implementasi, hingga optimasi — dengan fokus pada clean code, keamanan sistem, dan pengalaman pengguna yang nyaman.
+              </p>
+              <p className="text-gray-600 leading-relaxed text-sm">
+                Saya terbuka untuk kolaborasi maupun peluang di bidang pengembangan software, security, dan produk digital.
+              </p>
+              <div className="mt-6 grid grid-cols-2 gap-3 text-sm font-mono">
+                {[[' Born', '28 April 2006'], [' Location', 'Semarang, Indonesia'], [' Education', 'Unnes – Info Systems'], [' Email', 'dhifansapradibtya@gmail.com']].map(([k, v]) => (
+                  <div key={k} className="bg-gray-50 border border-gray-200 rounded-lg p-3">
+                    <p className="text-gray-500 text-xs">{k}</p>
+                    <p className="text-gray-900 text-xs mt-0.5 truncate">{v}</p>
+                  </div>
+                ))}
               </div>
-              <p className="text-gray-500">{`// developer.json`}</p>
-              <pre className="text-xs leading-6 mt-2 text-gray-300">{`{
+            </div>
+            <div className="relative">
+              <div className="bg-gray-950 border border-gray-800 rounded-2xl p-6 font-mono text-sm shadow-xl shadow-gray-200">
+                <div className="flex gap-2 mb-4">
+                  <span className="w-3 h-3 rounded-full bg-red-500" />
+                  <span className="w-3 h-3 rounded-full bg-yellow-500" />
+                  <span className="w-3 h-3 rounded-full bg-green-500" />
+                </div>
+                <p className="text-gray-500">{`// developer.json`}</p>
+                <pre className="text-xs leading-6 mt-2 text-gray-300">{`{
   "name": "Dhifansa Pradibtya Rafi'",
   "role": "Software Developer",
   "university": "Unnes",
   "focus": [
-    "Clean Code",
+    "Web Development",
     "Network Security",
     "UI/UX Design",
     "AI Exploration"
   ],
   "status": "open_to_work ✅"
 }`}</pre>
+              </div>
             </div>
           </div>
-        </div>
-      </Section>
+        </Section>
+      </div>
 
       {/* ── SKILLS ── */}
       <Section id="skills" className="relative z-10 max-w-5xl mx-auto px-6 py-24">
@@ -511,37 +613,55 @@ export default function Portfolio() {
         <div className="flex flex-wrap gap-3 mb-12">
           {SKILLS.map(s => <SkillBadge key={s} skill={s} />)}
         </div>
-       <div className="grid md:grid-cols-3 gap-6">
-  {[
-    { img: '/Developing.png',      title: 'Development', items: ['Web Applications','System Design','Clean Code','Debugging'] },
-    { img: '/design.png',   title: 'Design',      items: ['UI/UX Design','User Research','Wireframing','Prototyping'] },
-    { img: '/cyber.png', title: 'Security',    items: ['Network Security','Linux Ecosystem','System Security','Security Analysis'] },
-  ].map(({ img, title, items }) => (
-    <div key={title} className="group bg-gray-900/60 border border-gray-800 rounded-2xl p-6 hover:border-cyan-700 transition-colors duration-300">
-      
-      {/* Bingkai foto — ganti rounded-xl jadi rounded-full untuk lingkaran */}
-      <div className="w-65 h-35 rounded-xl overflow-hidden mb-3 border border-gray-700 group-hover:border-cyan-500 transition-colors duration-300 bg-gray-800 flex items-center justify-center">
-  <img
-    src={img}
-    alt={title}
-    width={112}
-    height={80}
-    className="w-full h-full object-cover"
-  />
-</div>
 
-      <h3 className="text-white font-bold mb-3">{title}</h3>
-      <ul className="space-y-1">
-        {items.map(i => (
-          <li key={i} className="text-gray-400 text-sm flex items-center gap-2">
-            <span className="w-1 h-1 rounded-full bg-cyan-400 group-hover:scale-150 transition-transform"/>
-            {i}
-          </li>
-        ))}
-      </ul>
-    </div>
-  ))}
-</div>
+        {/* Tech Stack Slider */}
+        <div className="w-full py-8 mb-16 relative overflow-hidden bg-gray-900/30 border-y border-gray-800/50 rounded-2xl">
+          <p className="text-center text-xs font-mono text-gray-500 uppercase tracking-widest mb-6">Featured Tech Stack</p>
+          <LogoLoop
+            logos={techLogos}
+            speed={60}
+            direction="left"
+            logoHeight={36}
+            gap={48}
+            hoverSpeed={0}
+            scaleOnHover
+            fadeOut
+            fadeOutColor="#030712" /* matches bg-gray-950 */
+            ariaLabel="Technologies"
+          />
+        </div>
+
+        <div className="grid md:grid-cols-3 gap-6">
+          {[
+            { img: '/Developing.png', title: 'Development', items: ['Web Applications', 'System Design', 'Clean Code', 'Debugging'] },
+            { img: '/design.png', title: 'Design', items: ['UI/UX Design', 'User Research', 'Wireframing', 'Prototyping'] },
+            { img: '/cyber.png', title: 'Security', items: ['Network Security', 'Linux Ecosystem', 'System Security', 'Security Analysis'] },
+          ].map(({ img, title, items }) => (
+            <div key={title} className="group bg-gray-900/60 border border-gray-800 rounded-2xl p-6 hover:border-cyan-700 transition-colors duration-300">
+
+              {/* Bingkai foto — ganti rounded-xl jadi rounded-full untuk lingkaran */}
+              <div className="w-65 h-35 rounded-xl overflow-hidden mb-3 border border-gray-700 group-hover:border-cyan-500 transition-colors duration-300 bg-gray-800 flex items-center justify-center">
+                <img
+                  src={img}
+                  alt={title}
+                  width={112}
+                  height={80}
+                  className="w-full h-full object-cover"
+                />
+              </div>
+
+              <h3 className="text-white font-bold mb-3">{title}</h3>
+              <ul className="space-y-1">
+                {items.map(i => (
+                  <li key={i} className="text-gray-400 text-sm flex items-center gap-2">
+                    <span className="w-1 h-1 rounded-full bg-cyan-400 group-hover:scale-150 transition-transform" />
+                    {i}
+                  </li>
+                ))}
+              </ul>
+            </div>
+          ))}
+        </div>
       </Section>
 
       {/* ── PROJECTS ── */}
@@ -575,8 +695,8 @@ export default function Portfolio() {
         <p className="text-gray-400 text-sm mb-10 max-w-md">Terbuka untuk kolaborasi, kesempatan kerja, atau sekadar ngobrol tentang teknologi!</p>
         <div className="flex flex-wrap gap-4 mb-10">
           {[
-            {  label: 'Email', href: 'mailto:dhifansapradibtya@gmail.com', value: 'dhifansapradibtya@gmail.com' },
-            {  label: 'Phone', href: 'tel:081225028952', value: '081225028952' },
+            { label: 'Email', href: 'mailto:dhifansapradibtya@gmail.com', value: 'dhifansapradibtya@gmail.com' },
+            { label: 'Phone', href: 'tel:081225028952', value: '081225028952' },
           ].map(({ label, href, value }) => (
             <a key={label} href={href} className="flex items-center gap-3 px-5 py-3 bg-gray-900/60 border border-gray-800 rounded-xl hover:border-cyan-600 hover:bg-gray-900 transition-all group">
               <div>
@@ -587,26 +707,26 @@ export default function Portfolio() {
           ))}
         </div>
         <p className="font-mono text-gray-500 text-xs uppercase tracking-widest mb-4">{/* social_links */}</p>
- <div className="flex flex-wrap gap-4">
-  {[
-    { img: '/instagram-logo-instagram-icon-transparent-free-png.png', label: 'Instagram', href: 'https://www.instagram.com/dhifansapradibya?igsh=b3M3bW1vNGtvM284&utm_source=qr', size: 28 },
-    { img: '/tiktok-logo-tik-tok-logo-icon-png-svg.png',              label: 'TikTok',    href: 'https://www.tiktok.com/@pasobesoo?_r=1&...',                                     size: 18 },
-    { img: '/linkedin-logo-transparent-free-png.png',                 label: 'LinkedIn',  href: 'https://www.linkedin.com/in/dhifansa-pradibtya-rafi-a32531322/',                  size: 28 },
-    { img: '/symbole-github-violet.png',                              label: 'GitHub',    href: 'https://github.com/dhifansa',                                                     size: 18 },
-  ].map(({ img, label, href, size }, index) => (  
-    <a key={`${label}-${index}`} href={href} target="_blank" rel="noreferrer"
-      className="flex items-center gap-2 px-5 py-2 border border-gray-700 rounded-full text-sm text-gray-300 hover:text-white hover:border-cyan-500 hover:bg-cyan-950/40 transition-all font-mono">
-      <img
-        src={img}
-        alt={label}
-        width={size}
-        height={size}
-        className="object-contain"
-      />
-      {label}
-    </a>
-  ))}
-</div>
+        <div className="flex flex-wrap gap-4">
+          {[
+            { img: '/instagram-logo-instagram-icon-transparent-free-png.png', label: 'Instagram', href: 'https://www.instagram.com/dhifansapradibya?igsh=b3M3bW1vNGtvM284&utm_source=qr', size: 28 },
+            { img: '/tiktok-logo-tik-tok-logo-icon-png-svg.png', label: 'TikTok', href: 'https://www.tiktok.com/@pasobesoo?_r=1&...', size: 18 },
+            { img: '/linkedin-logo-transparent-free-png.png', label: 'LinkedIn', href: 'https://www.linkedin.com/in/dhifansa-pradibtya-rafi-a32531322/', size: 28 },
+            { img: '/symbole-github-violet.png', label: 'GitHub', href: 'https://github.com/dhifansa', size: 18 },
+          ].map(({ img, label, href, size }, index) => (
+            <a key={`${label}-${index}`} href={href} target="_blank" rel="noreferrer"
+              className="flex items-center gap-2 px-5 py-2 border border-gray-700 rounded-full text-sm text-gray-300 hover:text-white hover:border-cyan-500 hover:bg-cyan-950/40 transition-all font-mono">
+              <img
+                src={img}
+                alt={label}
+                width={size}
+                height={size}
+                className="object-contain"
+              />
+              {label}
+            </a>
+          ))}
+        </div>
 
       </Section>
 
