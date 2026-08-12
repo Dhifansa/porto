@@ -277,14 +277,14 @@ const PROJECTS = [
   },
   {
     title: 'Landing Page Codelines',
-    date: 'february 2026 - now',
-    desc: 'Masih dalam tahap pengembangan',
+    date: 'february 2026 - august 2026',
+    desc: 'Codelines adalah organisasi mahasiswa berbasis teknologi di bawah UKM RIPTEK UNNES yang telah berpengalaman selama 6 tahun. Kami mengembangkan talenta digital melalui kolaborasi dan disiplin teknis, serta menghasilkan solusi teknologi yang berdampak bagi kampus dan mitra eksternal.',
     tech: ['System Design', 'UI/UX', 'Front End'],
     color: 'from-green-500 to-teal-600',
 
-    link: 'https://codelines-id.vercel.app/',
+    link: 'https://dev.codelines.id/',
     thumbnail: '/codelines.webp',
-    thumbnailAlt: 'Pupuk Petani System preview',
+    thumbnailAlt: 'Codelines preview',
   },
 ];
 
@@ -524,7 +524,7 @@ export default function Portfolio() {
       <Modal proj={modal} onClose={() => setModal(null)} />
 
       {/* ── HERO ── */}
-      <section id="home" className="relative min-h-screen flex flex-col items-center justify-center px-6 text-center z-10">
+      <section id="home" className="relative min-h-[115vh] md:min-h-screen flex flex-col items-center justify-center px-6 pt-10 pb-20 md:py-0 text-center z-10">
         {/* Waves Background */}
         <div style={{ position: 'absolute', inset: 0, zIndex: 0 }}>
           <DeferredRender delay={500}>
@@ -545,7 +545,7 @@ export default function Portfolio() {
         </div>
         <div className="relative z-10 flex flex-col md:flex-row items-center justify-center gap-6 md:gap-0 w-full max-w-6xl mx-auto h-full">
           {/* Lanyard Card */}
-          <div className="w-full md:w-1/2 h-[65vh] md:h-screen flex items-center justify-center md:-mt-16">
+          <div className="w-full md:w-1/2 h-[65vh] md:h-screen flex items-center justify-center -mt-12 md:-mt-16">
             <DeferredRender delay={800}>
               <Lanyard
                 position={[0, 0, 10]}
@@ -556,7 +556,7 @@ export default function Portfolio() {
             </DeferredRender>
           </div>
           {/* Text Content */}
-          <div className="w-full md:w-1/2 flex flex-col items-center md:items-start text-center md:text-left">
+          <div className="w-full md:w-1/2 flex flex-col items-center md:items-start text-center md:text-left pb-12 md:pb-0">
             <p className="font-mono text-cyan-500 text-sm tracking-widest mb-2 uppercase">Hello, World! </p>
             <h1 className="text-4xl md:text-6xl font-black mb-3 leading-tight">
               <GlitchText text="Dhifansa Pradibtya Rafi'" className="text-white" />
