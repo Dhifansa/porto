@@ -282,7 +282,7 @@ const PROJECTS = [
     tech: ['System Design', 'UI/UX', 'Front End'],
     color: 'from-green-500 to-teal-600',
 
-    link: 'https://dev.codelines.id/',
+    link: 'https://codelines.id/',
     thumbnail: '/codelines.webp',
     thumbnailAlt: 'Codelines preview',
   },
